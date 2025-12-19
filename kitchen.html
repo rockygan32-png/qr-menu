@@ -6,14 +6,13 @@
 <body>
 
 <h1>Kitchen Orders</h1>
-
 <div id="orders"></div>
 
-<!-- Firebase scripts -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+<!-- Firebase v10 Modular SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<script>
   // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvWqwmCXk81k",
@@ -25,23 +24,22 @@
   };
 
   // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
   const container = document.getElementById("orders");
 
   // Listen to orders in real-time
-  db.collection("orders")
-    .orderBy("time")
-    .onSnapshot(snapshot => {
-      container.innerHTML = ""; // clear previous orders
-      snapshot.forEach(doc => {
-        const o = doc.data();
-        const div = document.createElement("div");
-        div.innerText = `Table ${o.table}: ${o.item} (${o.status})`;
-        container.appendChild(div);
-      });
+  const q = query(collection(db, "orders"), orderBy("time"));
+  onSnapshot(q, (snapshot) => {
+    container.innerHTML = ""; // clear previous orders
+    snapshot.forEach((doc) => {
+      const o = doc.data();
+      const div = document.createElement("div");
+      div.innerText = `Table ${o.table}: ${o.item} (${o.status})`;
+      container.appendChild(div);
     });
+  });
 </script>
 
 </body>
