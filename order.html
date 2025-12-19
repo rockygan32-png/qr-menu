@@ -1,7 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Restaurant Menu</title>
+    <meta charset="UTF-8">
+  <title>QR Menu</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+    }
+
+    /* ===== CATEGORY BAR ===== */
+    .category-bar {
+      display: flex;
+      overflow-x: auto;
+      background: #111;
+      padding: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .category-bar button {
+      flex: none;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      margin-right: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .category-bar button:hover {
+      color: gold;
+    }
+
+    /* ===== SECTION ===== */
+    .section {
+      padding: 20px;
+    }
+
+    .section h2 {
+      margin-bottom: 10px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+    }
+
+    /* ===== FOOD CARD ===== */
+    .food-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .food-title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .food-code {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .food-price {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
@@ -57,5 +127,64 @@
   }
 </script>
 
+<!-- ===== CATEGORY BAR ===== -->
+<div class="category-bar">
+  <button onclick="scrollToSection('burger')">🍔 Burgers</button>
+  <button onclick="scrollToSection('pasta')">🍝 Pasta</button>
+  <button onclick="scrollToSection('drink')">🥤 Beverages</button>
+</div>
+
+<!-- ===== BURGER SECTION ===== -->
+<div class="section" id="burger">
+  <h2>Burgers</h2>
+
+  <div class="food-card">
+    <div class="food-title">Chicken Burger <span class="food-code">(A01)</span></div>
+    <div class="food-price">RM 15</div>
+  </div>
+
+  <div class="food-card">
+    <div class="food-title">Beef Burger <span class="food-code">(A02)</span></div>
+    <div class="food-price">RM 18</div>
+  </div>
+</div>
+
+<!-- ===== PASTA SECTION ===== -->
+<div class="section" id="pasta">
+  <h2>Pasta</h2>
+
+  <div class="food-card">
+    <div class="food-title">Carbonara <span class="food-code">(B01)</span></div>
+    <div class="food-price">RM 20</div>
+  </div>
+
+  <div class="food-card">
+    <div class="food-title">Aglio Olio <span class="food-code">(B02)</span></div>
+    <div class="food-price">RM 18</div>
+  </div>
+</div>
+
+<!-- ===== DRINK SECTION ===== -->
+<div class="section" id="drink">
+  <h2>Beverages</h2>
+
+  <div class="food-card">
+    <div class="food-title">Coke <span class="food-code">(C01)</span></div>
+    <div class="food-price">RM 5</div>
+  </div>
+
+  <div class="food-card">
+    <div class="food-title">Lemon Tea <span class="food-code">(C02)</span></div>
+    <div class="food-price">RM 6</div>
+  </div>
+</div>
+
+<script>
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({
+      behavior: "smooth"
+    });
+  }
+</script>
 </body>
 </html>
