@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kitchen Screen</title>
+</head>
+<body>
+
+<h1>Kitchen Orders</h1>
+
+<div id="orders"></div>
+
+<!-- Firebase scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvWqwmCXk81k",
+    authDomain: "qr-menu-fe159.firebaseapp.com",
+    projectId: "qr-menu-fe159",
+    storageBucket: "qr-menu-fe159.appspot.com",
+    messagingSenderId: "105707127728",
+    appId: "1:105707127728:web:65dee4362f74b67f35cc75"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const container = document.getElementById("orders");
+
+  // Listen to orders in real-time
+  db.collection("orders")
+    .orderBy("time")
+    .onSnapshot(snapshot => {
+      container.innerHTML = ""; // clear previous orders
+      snapshot.forEach(doc => {
+        const o = doc.data();
+        const div = document.createElement("div");
+        div.innerText = `Table ${o.table}: ${o.item} (${o.status})`;
+        container.appendChild(div);
+      });
+    });
+</script>
+
+</body>
+</html>

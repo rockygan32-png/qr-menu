@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Menu</title>
+</head>
+<body>
+
+<h1>Welcome to Our Restaurant</h1>
+
+<p id="tableInfo"></p>
+
+<button onclick="order()">Order Chicken Chop</button>
+
+<!-- Firebase scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvWqwmCXk81k",
+    authDomain: "qr-menu-fe159.firebaseapp.com",
+    projectId: "qr-menu-fe159",
+    storageBucket: "qr-menu-fe159.appspot.com",
+    messagingSenderId: "105707127728",
+    appId: "1:105707127728:web:65dee4362f74b67f35cc75"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Get table number from URL
+  const params = new URLSearchParams(window.location.search);
+  const table = params.get("table");
+
+  if (!table) {
+    document.body.innerHTML = "Please scan the QR code on your table.";
+  } else {
+    document.getElementById("tableInfo").innerText =
+      "You are ordering from Table " + table;
+  }
+
+  // Order function
+  function order() {
+    db.collection("orders").add({
+      table: table,
+      item: "Chicken Chop",
+      status: "new",
+      time: new Date()
+    })
+    .then(() => {
+      alert("Order sent to kitchen!");
+    })
+    .catch((error) => {
+      alert("Error sending order: " + error);
+    });
+  }
+</script>
+
+</body>
+</html>
