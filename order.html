@@ -74,7 +74,8 @@
   </style>
 </head>
 <body>
-
+  <p id="tableInfo" style="padding:10px;font-weight:bold;"></p>
+<p id="orderType" style="padding:10px;font-weight:bold;"></p>
 <h1>Welcome to Our Restaurant</h1>
 <p id="tableInfo"></p>
 
@@ -125,6 +126,27 @@
       alert("Error: " + error.message);
     });
   }
+  
+  const type = localStorage.getItem("orderType");
+
+if (type === "dinein") {
+  document.getElementById("orderType").innerText = "🍽️ Dine In";
+} else if (type === "takeaway") {
+  document.getElementById("orderType").innerText = "🥡 Take Away";
+}
+
+const table = localStorage.getItem("table");
+const type = localStorage.getItem("orderType");
+
+let text = "";
+
+if (type === "dinein") {
+  text = "🍽️ Dine In — Table " + table;
+} else if (type === "takeaway") {
+  text = "🥡 Take Away";
+}
+
+document.getElementById("tableInfo").innerText = text;
 </script>
 
 <!-- ===== CATEGORY BAR ===== -->

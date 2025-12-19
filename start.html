@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      text-align: center;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .dinein {
+      background: gold;
+      color: black;
+    }
+
+    .takeaway {
+      background: white;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h1>Welcome</h1>
+  <button class="dinein" onclick="choose('dinein')">🍽️ Dine In</button>
+  <button class="takeaway" onclick="choose('takeaway')">🥡 Take Away</button>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const table = params.get("table");
+
+  if (table) {
+    localStorage.setItem("table", table);
+  }
+
+  function choose(type) {
+    localStorage.setItem("orderType", type);
+    window.location.href = "order.html";
+  }
+  function choose(type) {
+    localStorage.setItem("orderType", type);
+    window.location.href = "order.html";
+  }
+</script>
+
+</body>
+</html>
