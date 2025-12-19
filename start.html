@@ -60,17 +60,16 @@
   const params = new URLSearchParams(window.location.search);
   const table = params.get("table");
 
-  if (table) {
-    localStorage.setItem("table", table);
-  }
+  function choose(type) {
+    let url = "order.html";
 
-  function choose(type) {
-    localStorage.setItem("orderType", type);
-    window.location.href = "order.html";
-  }
-  function choose(type) {
-    localStorage.setItem("orderType", type);
-    window.location.href = "order.html";
+    if (table) {
+      url += "?table=" + table + "&type=" + type;
+    } else {
+      url += "?type=" + type;
+    }
+
+    window.location.href = url;
   }
 </script>
 

@@ -198,8 +198,9 @@ if (type === "dinein") {
 </script>
 </body>
 <script>
-  const table = localStorage.getItem("table");
-  const type = localStorage.getItem("orderType");
+  const params = new URLSearchParams(window.location.search);
+  const table = params.get("table");
+  const type = params.get("type");
 
   let text = "";
 
@@ -207,6 +208,8 @@ if (type === "dinein") {
     text = "🍽️ Dine In — Table " + table;
   } else if (type === "takeaway") {
     text = "🥡 Take Away";
+  } else {
+    text = "Welcome";
   }
 
   document.getElementById("tableInfo").innerText = text;
