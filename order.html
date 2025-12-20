@@ -63,6 +63,11 @@ body {
   white-space: nowrap;
 }
 
+.category-bar button.active {
+  color: gold;
+  border-bottom: 2px solid gold;
+}
+
 .category-bar button:hover {
   color: gold;
 }
@@ -132,10 +137,10 @@ body {
 
 <!-- ===== CATEGORY BAR ===== -->
 <div class="category-bar">
-  <button onclick="scrollToSection('burger')">🍔 Burgers</button>
-  <button onclick="scrollToSection('pasta')">🍝 Pasta</button>
-  <button onclick="scrollToSection('drink')">🥤 Drinks</button>
-  <button onclick="scrollToSection('asian')">🍚 Asian Cuisine</button>
+  <button data-target="burger" onclick="scrollToSection('burger')">🍔 Burgers</button>
+  <button data-target="pasta" onclick="scrollToSection('pasta')">🍝 Pasta</button>
+  <button data-target="asian" onclick="scrollToSection('asian')">🍚 Asian Cuisine</button>
+  <button data-target="drink" onclick="scrollToSection('drink')">🥤 Drinks</button>
 </div>
 
 <!-- ===== BURGERS ===== -->
@@ -260,5 +265,39 @@ if (type === "dinein" && table) {
 }
 </script>
 
+<script>
+const sections = document.querySelectorAll(".section");
+const buttons = document.querySelectorAll(".category-bar button");
+const bar = document.querySelector(".category-bar");
+
+function setActive(id) {
+  buttons.forEach(btn => {
+    btn.classList.remove("active");
+    if (btn.dataset.target === id) {
+      btn.classList.add("active");
+
+      // auto scroll category bar
+      btn.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
+    }
+  });
+}
+
+window.addEventListener("scroll", () => {
+  let current = "";
+
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 120 && rect.bottom >= 120) {
+      current = section.id;
+    }
+  });
+
+  if (current) setActive(current);
+});
+</script>
 </body>
 </html>
