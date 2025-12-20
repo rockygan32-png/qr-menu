@@ -135,6 +135,7 @@ body {
   <button onclick="scrollToSection('burger')">🍔 Burgers</button>
   <button onclick="scrollToSection('pasta')">🍝 Pasta</button>
   <button onclick="scrollToSection('drink')">🥤 Drinks</button>
+  <button onclick="scrollToSection('asian')">🍚 Asian Cuisine</button>
 </div>
 
 <!-- ===== BURGERS ===== -->
@@ -185,6 +186,35 @@ body {
 </div>
 </div>
 
+<!-- ===== ASIAN CUISINE ===== -->
+<div class="section" id="asian">
+<h2>Asian Cuisine</h2>
+
+<div class="grid">
+
+  <div class="food-card" onclick="showDetail('Nasi Lemak')">
+    <img src="https://images.unsplash.com/photo-1604908554166-5e7c4f2f1e62">
+    <div class="food-info">
+      <div class="food-title">
+        Nasi Lemak <span class="food-code">(C01)</span>
+      </div>
+      <div class="food-price">RM 12</div>
+    </div>
+  </div>
+
+  <div class="food-card" onclick="showDetail('Nasi Goreng')">
+    <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec">
+    <div class="food-info">
+      <div class="food-title">
+        Nasi Goreng <span class="food-code">(C02)</span>
+      </div>
+      <div class="food-price">RM 13</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <!-- ===== DRINKS ===== -->
 <div class="section" id="drink">
 <h2>Drinks</h2>
@@ -193,7 +223,7 @@ body {
 <div class="food-card" onclick="showDetail('Coke')">
   <img src="https://images.unsplash.com/photo-1622483767028-3f66f32b1c31">
   <div class="food-info">
-    <div class="food-title">Coke <span class="food-code">(C01)</span></div>
+    <div class="food-title">Coke <span class="food-code">(D01)</span></div>
     <div class="food-price">RM 5</div>
   </div>
 </div>
@@ -201,7 +231,7 @@ body {
 <div class="food-card" onclick="showDetail('Lemon Tea')">
   <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc">
   <div class="food-info">
-    <div class="food-title">Lemon Tea <span class="food-code">(C02)</span></div>
+    <div class="food-title">Lemon Tea <span class="food-code">(D02)</span></div>
     <div class="food-price">RM 6</div>
   </div>
 </div>
