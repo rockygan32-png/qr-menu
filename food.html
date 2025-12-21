@@ -36,6 +36,9 @@ button {
   border-radius:8px;
   font-size:16px;
 }
+.option-group {
+  margin:15px 0;
+}
 </style>
 </head>
 
@@ -47,7 +50,9 @@ button {
   <h2 id="name"></h2>
   <p id="code"></p>
   <p id="desc"></p>
+
   <div id="options"></div>
+
   <h3 id="price"></h3>
 
   <div class="qty">
@@ -60,18 +65,13 @@ button {
 </div>
 
 <script>
-const p = new URLSearchParams(location.search);
-const food = {
-  name: p.get("name"),
-  code: p.get("code"),
-  price: Number(p.get("price")),
-  desc: p.get("desc"),
-  img: p.get("img")
-};
-
+// ================= FOOD CONFIG =================
 const FOOD_DATA = {
   A01: {
     name: "Chicken Burger",
+    code: "A01",
+    desc: "Juicy grilled chicken burger with fresh vegetables",
+    img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086",
     basePrice: 15,
     options: {
       choices: [
@@ -100,44 +100,29 @@ const FOOD_DATA = {
   }
 };
 
+// ================= LOAD FOOD =================
 const params = new URLSearchParams(location.search);
 const code = params.get("code");
-
 const food = FOOD_DATA[code];
+
+if (!food) {
+  document.body.innerHTML = "Food not found.";
+  throw new Error("Invalid food code");
+}
 
 document.getElementById("img").src = food.img;
 document.getElementById("name").innerText = food.name;
 document.getElementById("code").innerText = food.code;
 document.getElementById("desc").innerText = food.desc;
-document.getElementById("price").innerText = "RM " + food.price;
 
-let qty = 1;
-function chg(n){
-  qty += n;
-  if(qty < 1) qty = 1;
-  document.getElementById("qty").innerText = qty;
-}
-
-function addCart(){
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  cart.push({
-    ...food,
-    qty: qty
-  });
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Added to cart 🛒");
-  history.back();
-}
-
+// ================= OPTIONS UI =================
 const optionsDiv = document.getElementById("options");
-let totalPrice = food.basePrice;
 
-// Render choice options
+// Choices
 food.options.choices.forEach(group => {
   const div = document.createElement("div");
-  div.innerHTML = `<p><strong>${group.label}</strong></p>`;
+  div.className = "option-group";
+  div.innerHTML = `<strong>${group.label}</strong><br>`;
 
   group.values.forEach((v, i) => {
     div.innerHTML += `
@@ -155,9 +140,10 @@ food.options.choices.forEach(group => {
   optionsDiv.appendChild(div);
 });
 
-// Render add-ons
+// Add-ons
 const addonDiv = document.createElement("div");
-addonDiv.innerHTML = "<p><strong>Add-ons</strong></p>";
+addonDiv.className = "option-group";
+addonDiv.innerHTML = "<strong>Add-ons</strong><br>";
 
 food.options.addons.forEach(a => {
   addonDiv.innerHTML += `
@@ -172,20 +158,56 @@ food.options.addons.forEach(a => {
 
 optionsDiv.appendChild(addonDiv);
 
+// ================= PRICE LOGIC =================
+let qty = 1;
+
+function chg(n) {
+  qty += n;
+  if (qty < 1) qty = 1;
+  document.getElementById("qty").innerText = qty;
+  updatePrice();
+}
+
 function updatePrice() {
   let price = food.basePrice;
 
-  document
-    .querySelectorAll("input[type=checkbox]:checked")
-    .forEach(cb => {
-      price += Number(cb.dataset.price);
-    });
+  document.querySelectorAll("input[type=checkbox]:checked")
+    .forEach(cb => price += Number(cb.dataset.price));
 
   document.getElementById("price").innerText =
-    "Total: RM " + price.toFixed(2);
+    "Total: RM " + (price * qty).toFixed(2);
 }
 
 updatePrice();
+
+// ================= CART =================
+function addCart() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const selectedOptions = {};
+
+  food.options.choices.forEach(group => {
+    selectedOptions[group.name] =
+      document.querySelector(`input[name="${group.name}"]:checked`).value;
+  });
+
+  const addons = [];
+  document.querySelectorAll("input[type=checkbox]:checked")
+    .forEach(cb => addons.push(cb.parentElement.innerText));
+
+  cart.push({
+    code: food.code,
+    name: food.name,
+    qty,
+    options: selectedOptions,
+    addons,
+    price: document.getElementById("price").innerText
+  });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("Added to cart 🛒");
+  history.back();
+}
 </script>
 
 </body>
