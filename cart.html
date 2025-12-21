@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart</title>
+<style>
+  body { font-family: Arial; margin: 0; padding: 20px; background:#f9f9f9; }
+  h1 { text-align:center; }
+  .cart-item { background: white; padding: 15px; margin-bottom: 10px; border-radius:10px; }
+  .cart-item h3 { margin: 0; }
+  .cart-item p { margin: 5px 0; color: #555; }
+  .qty { display:flex; gap:10px; align-items:center; margin-top:10px; }
+  button { padding:5px 10px; cursor:pointer; }
+  .remove { background:red; color:white; border:none; border-radius:5px; }
+</style>
+</head>
+<body>
+
+<h1>Your Cart</h1>
+<div id="cart"></div>
+<h2 id="total"></h2>
+<button onclick="checkout()">Checkout</button>
+
+<script>
+// Load cart from localStorage
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+const cartDiv = document.getElementById("cart");
+const totalDiv = document.getElementById("total");
+
+// Render cart items
+function renderCart() {
+  cartDiv.innerHTML = "";
+  let totalPrice = 0;
+
+  cart.forEach((item, index) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "cart-item";
+
+    let choicesText = "";
+    for (let key in item.choices) {
+      choicesText += `${key}: ${item.choices[key]}, `;
+    }
+
+    itemDiv.innerHTML = `
+      <h3>${item.name} x${item.qty}</h3>
+      <p>${choicesText} Add-ons: ${item.addons.join(", ")}</p>
+      <p>Total: ${item.total}</p>
+      <div class="qty">
+        <button onclick="changeQty(${index}, -1)">−</button>
+        <span>${item.qty}</span>
+        <button onclick="changeQty(${index}, 1)">+</button>
+        <button class="remove" onclick="removeItem(${index})">Remove</button>
+      </div>
+    `;
+
+    cartDiv.appendChild(itemDiv);
+
+    totalPrice += parseFloat(item.total.replace("Total: RM ", "")) * item.qty;
+  });
+
+  totalDiv.innerText = "Grand Total: RM " + totalPrice.toFixed(2);
+}
+
+renderCart();
+
+// Change quantity
+function changeQty(index, delta) {
+  cart[index].qty += delta;
+  if (cart[index].qty < 1) cart[index].qty = 1;
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+// Remove item
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+// Checkout (for now just alert)
+function checkout() {
+  if(cart.length === 0) {
+    alert("Cart is empty!");
+    return;
+  }
+  alert("Checkout successful!\n\n" + JSON.stringify(cart, null, 2));
+  localStorage.removeItem("cart");
+  cart = [];
+  renderCart();
+}
+</script>
+
+</body>
+</html>
