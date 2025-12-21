@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-<style>
 body {
   margin:0;
   font-family:Arial;
@@ -45,7 +44,6 @@ h3 {
   background:white;
   text-align:center;
   cursor:pointer;
-  font-size:14px;
 }
 
 .choice.active {
@@ -91,7 +89,6 @@ button {
   padding:14px;
 }
 </style>
-</style>
 </head>
 
 <body>
@@ -127,21 +124,9 @@ const FOOD_DATA = {
     basePrice: 15,
     options: {
       choices: [
-        {
-          label: "Spicy Level",
-          name: "spicy",
-          values: ["Not Spicy", "Spicy"]
-        },
-        {
-          label: "Egg",
-          name: "egg",
-          values: ["No Egg", "Egg"]
-        },
-        {
-          label: "Lettuce",
-          name: "lettuce",
-          values: ["No Lettuce", "Lettuce"]
-        }
+        { label: "Spicy Level", name: "spicy", values: ["Not Spicy", "Spicy"] },
+        { label: "Egg", name: "egg", values: ["No Egg", "Egg"] },
+        { label: "Lettuce", name: "lettuce", values: ["No Lettuce", "Lettuce"] }
       ],
       addons: [
         { name: "Extra Cheese", price: 2 },
@@ -167,14 +152,12 @@ document.getElementById("name").innerText = food.name;
 document.getElementById("code").innerText = food.code;
 document.getElementById("desc").innerText = food.desc;
 
-// ================= OPTIONS UI =================
-const optionsDiv = document.getElementById("options");
-
-// Choices
+// ================= OPTIONS =================
 const optionsDiv = document.getElementById("options");
 let selectedChoices = {};
 let selectedAddons = [];
 
+// Choices
 food.options.choices.forEach(group => {
   selectedChoices[group.name] = group.values[0];
 
@@ -203,7 +186,7 @@ food.options.choices.forEach(group => {
   optionsDiv.appendChild(groupDiv);
 });
 
-// ADD-ONS
+// Add-ons
 const addonDiv = document.createElement("div");
 addonDiv.className = "option-group";
 addonDiv.innerHTML = "<h3>Add-ons</h3>";
@@ -211,20 +194,13 @@ addonDiv.innerHTML = "<h3>Add-ons</h3>";
 food.options.addons.forEach(a => {
   const box = document.createElement("div");
   box.className = "addon";
-  box.innerHTML = `
-    <span>${a.name}</span>
-    <strong>+RM ${a.price}</strong>
-  `;
+  box.innerHTML = `<span>${a.name}</span><strong>+RM ${a.price}</strong>`;
 
   box.onclick = () => {
     box.classList.toggle("active");
-
-    if (selectedAddons.includes(a)) {
-      selectedAddons = selectedAddons.filter(x => x !== a);
-    } else {
-      selectedAddons.push(a);
-    }
-
+    selectedAddons.includes(a)
+      ? selectedAddons = selectedAddons.filter(x => x !== a)
+      : selectedAddons.push(a);
     updatePrice();
   };
 
@@ -232,22 +208,19 @@ food.options.addons.forEach(a => {
 });
 
 optionsDiv.appendChild(addonDiv);
-// ================= PRICE LOGIC =================
+
+// ================= PRICE =================
 let qty = 1;
 
 function chg(n) {
-  qty += n;
-  if (qty < 1) qty = 1;
+  qty = Math.max(1, qty + n);
   document.getElementById("qty").innerText = qty;
   updatePrice();
 }
 
 function updatePrice() {
   let price = food.basePrice;
-
-  document.querySelectorAll("input[type=checkbox]:checked")
-    .forEach(cb => price += Number(cb.dataset.price));
-
+  selectedAddons.forEach(a => price += a.price);
   document.getElementById("price").innerText =
     "Total: RM " + (price * qty).toFixed(2);
 }
