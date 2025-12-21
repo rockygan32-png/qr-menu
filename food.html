@@ -6,39 +6,91 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+<style>
 body {
   margin:0;
   font-family:Arial;
   background:#f9f9f9;
 }
+
 img {
   width:100%;
   height:260px;
   object-fit:cover;
 }
+
 .container {
   padding:15px;
 }
+
+h3 {
+  margin-top:25px;
+}
+
+.option-group {
+  margin-top:20px;
+}
+
+.option-row {
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.choice {
+  flex:1;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:white;
+  text-align:center;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.choice.active {
+  border:2px solid #111;
+  background:#111;
+  color:white;
+}
+
+.addon {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:white;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+.addon.active {
+  border:2px solid #111;
+}
+
 .qty {
   display:flex;
   gap:20px;
   align-items:center;
   margin:20px 0;
 }
+
 button {
   padding:10px 16px;
 }
+
 .add {
   width:100%;
   background:#111;
   color:white;
   border:none;
-  border-radius:8px;
+  border-radius:12px;
   font-size:16px;
+  padding:14px;
 }
-.option-group {
-  margin:15px 0;
-}
+</style>
 </style>
 </head>
 
@@ -119,45 +171,67 @@ document.getElementById("desc").innerText = food.desc;
 const optionsDiv = document.getElementById("options");
 
 // Choices
-food.options.choices.forEach(group => {
-  const div = document.createElement("div");
-  div.className = "option-group";
-  div.innerHTML = `<strong>${group.label}</strong><br>`;
+const optionsDiv = document.getElementById("options");
+let selectedChoices = {};
+let selectedAddons = [];
 
-  group.values.forEach((v, i) => {
-    div.innerHTML += `
-      <label>
-        <input type="radio"
-               name="${group.name}"
-               value="${v}"
-               ${i === 0 ? "checked" : ""}
-               onchange="updatePrice()">
-        ${v}
-      </label><br>
-    `;
+food.options.choices.forEach(group => {
+  selectedChoices[group.name] = group.values[0];
+
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "option-group";
+  groupDiv.innerHTML = `<h3>${group.label}</h3>`;
+
+  const row = document.createElement("div");
+  row.className = "option-row";
+
+  group.values.forEach((value, index) => {
+    const box = document.createElement("div");
+    box.className = "choice" + (index === 0 ? " active" : "");
+    box.innerText = value;
+
+    box.onclick = () => {
+      selectedChoices[group.name] = value;
+      row.querySelectorAll(".choice").forEach(c => c.classList.remove("active"));
+      box.classList.add("active");
+    };
+
+    row.appendChild(box);
   });
 
-  optionsDiv.appendChild(div);
+  groupDiv.appendChild(row);
+  optionsDiv.appendChild(groupDiv);
 });
 
-// Add-ons
+// ADD-ONS
 const addonDiv = document.createElement("div");
 addonDiv.className = "option-group";
-addonDiv.innerHTML = "<strong>Add-ons</strong><br>";
+addonDiv.innerHTML = "<h3>Add-ons</h3>";
 
 food.options.addons.forEach(a => {
-  addonDiv.innerHTML += `
-    <label>
-      <input type="checkbox"
-             data-price="${a.price}"
-             onchange="updatePrice()">
-      ${a.name} (+RM ${a.price})
-    </label><br>
+  const box = document.createElement("div");
+  box.className = "addon";
+  box.innerHTML = `
+    <span>${a.name}</span>
+    <strong>+RM ${a.price}</strong>
   `;
+
+  box.onclick = () => {
+    box.classList.toggle("active");
+
+    if (selectedAddons.includes(a)) {
+      selectedAddons = selectedAddons.filter(x => x !== a);
+    } else {
+      selectedAddons.push(a);
+    }
+
+    updatePrice();
+  };
+
+  addonDiv.appendChild(box);
 });
 
 optionsDiv.appendChild(addonDiv);
-
 // ================= PRICE LOGIC =================
 let qty = 1;
 
@@ -184,24 +258,13 @@ updatePrice();
 function addCart() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  const selectedOptions = {};
-
-  food.options.choices.forEach(group => {
-    selectedOptions[group.name] =
-      document.querySelector(`input[name="${group.name}"]:checked`).value;
-  });
-
-  const addons = [];
-  document.querySelectorAll("input[type=checkbox]:checked")
-    .forEach(cb => addons.push(cb.parentElement.innerText));
-
   cart.push({
     code: food.code,
     name: food.name,
     qty,
-    options: selectedOptions,
-    addons,
-    price: document.getElementById("price").innerText
+    choices: selectedChoices,
+    addons: selectedAddons.map(a => a.name),
+    total: document.getElementById("price").innerText
   });
 
   localStorage.setItem("cart", JSON.stringify(cart));
