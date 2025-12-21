@@ -47,6 +47,7 @@ button {
   <h2 id="name"></h2>
   <p id="code"></p>
   <p id="desc"></p>
+  <div id="options"></div>
   <h3 id="price"></h3>
 
   <div class="qty">
@@ -67,6 +68,42 @@ const food = {
   desc: p.get("desc"),
   img: p.get("img")
 };
+
+const FOOD_DATA = {
+  A01: {
+    name: "Chicken Burger",
+    basePrice: 15,
+    options: {
+      choices: [
+        {
+          label: "Spicy Level",
+          name: "spicy",
+          values: ["Not Spicy", "Spicy"]
+        },
+        {
+          label: "Egg",
+          name: "egg",
+          values: ["No Egg", "Egg"]
+        },
+        {
+          label: "Lettuce",
+          name: "lettuce",
+          values: ["No Lettuce", "Lettuce"]
+        }
+      ],
+      addons: [
+        { name: "Extra Cheese", price: 2 },
+        { name: "Extra Egg", price: 1 },
+        { name: "Extra Black Pepper Sauce", price: 0.5 }
+      ]
+    }
+  }
+};
+
+const params = new URLSearchParams(location.search);
+const code = params.get("code");
+
+const food = FOOD_DATA[code];
 
 document.getElementById("img").src = food.img;
 document.getElementById("name").innerText = food.name;
@@ -93,6 +130,62 @@ function addCart(){
   alert("Added to cart 🛒");
   history.back();
 }
+
+const optionsDiv = document.getElementById("options");
+let totalPrice = food.basePrice;
+
+// Render choice options
+food.options.choices.forEach(group => {
+  const div = document.createElement("div");
+  div.innerHTML = `<p><strong>${group.label}</strong></p>`;
+
+  group.values.forEach((v, i) => {
+    div.innerHTML += `
+      <label>
+        <input type="radio"
+               name="${group.name}"
+               value="${v}"
+               ${i === 0 ? "checked" : ""}
+               onchange="updatePrice()">
+        ${v}
+      </label><br>
+    `;
+  });
+
+  optionsDiv.appendChild(div);
+});
+
+// Render add-ons
+const addonDiv = document.createElement("div");
+addonDiv.innerHTML = "<p><strong>Add-ons</strong></p>";
+
+food.options.addons.forEach(a => {
+  addonDiv.innerHTML += `
+    <label>
+      <input type="checkbox"
+             data-price="${a.price}"
+             onchange="updatePrice()">
+      ${a.name} (+RM ${a.price})
+    </label><br>
+  `;
+});
+
+optionsDiv.appendChild(addonDiv);
+
+function updatePrice() {
+  let price = food.basePrice;
+
+  document
+    .querySelectorAll("input[type=checkbox]:checked")
+    .forEach(cb => {
+      price += Number(cb.dataset.price);
+    });
+
+  document.getElementById("price").innerText =
+    "Total: RM " + price.toFixed(2);
+}
+
+updatePrice();
 </script>
 
 </body>
