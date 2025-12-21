@@ -148,7 +148,14 @@ body {
 <h2>Burgers</h2>
 <div class="grid">
 
-<div class="food-card" onclick="showDetail('Chicken Burger')">
+<div class="food-card"
+ onclick="goFood(
+  'Chicken Burger',
+  'A01',
+  15,
+  'Juicy grilled chicken burger',
+  'https://images.unsplash.com/photo-1606755962773-d324e0a13086'
+ )">
   <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086">
   <div class="food-info">
     <div class="food-title">Chicken Burger <span class="food-code">(A01)</span></div>
@@ -298,6 +305,18 @@ window.addEventListener("scroll", () => {
 
   if (current) setActive(current);
 });
+</script>
+<script>
+function goFood(name, code, price, desc, img) {
+  const url =
+    `food.html?name=${encodeURIComponent(name)}` +
+    `&code=${code}` +
+    `&price=${price}` +
+    `&desc=${encodeURIComponent(desc)}` +
+    `&img=${encodeURIComponent(img)}`;
+
+  window.location.href = url;
+}
 </script>
 </body>
 </html>
