@@ -229,28 +229,15 @@ updatePrice();
 
 // ================= CART =================
 function addCart() {
-  let base = food.basePrice;
-
-  // Add addon prices
-  selectedAddons.forEach(a => {
-    base += a.price;
-  });
-
-  const itemTotal = base * qty;
-
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
   cart.push({
     code: food.code,
     name: food.name,
-    qty: qty,
-    unitPrice: base,        // ⭐ price per item
-    itemTotal: itemTotal,   // ⭐ total for this item
+    qty,
     choices: selectedChoices,
-    addons: selectedAddons.map(a => ({
-      name: a.name,
-      price: a.price
-    }))
+    addons: selectedAddons.map(a => a.name),
+    total: document.getElementById("price").innerText
   });
 
   localStorage.setItem("cart", JSON.stringify(cart));

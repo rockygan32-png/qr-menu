@@ -82,21 +82,10 @@ function checkout() {
     return;
   }
 
-  let subtotal = 0;
-  cart.forEach(i => subtotal += i.itemTotal);
-
-  const service = subtotal * 0.05;
-  const tax = subtotal * 0.02;
-  const grandTotal = Math.round((subtotal + service + tax) * 20) / 20;
-
   db.collection("orders").add({
     table: table || "TA",
     type: type || "takeaway",
     items: cart,
-    subtotal,
-    service,
-    tax,
-    total: grandTotal,
     status: "new",
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
@@ -105,7 +94,8 @@ function checkout() {
     localStorage.removeItem("cart");
     cart = [];
     renderCart();
-  });
+  })
+  .catch(e => alert(e.message));
 }
 
 renderCart();
