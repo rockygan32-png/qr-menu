@@ -107,38 +107,56 @@ db.collection("orders")
         ? "🥡 Take Away"
         : "🍽️ Table " + o.table;
 
-      let itemsHTML = "";
-      o.items.forEach(item => {
-        let opts = "";
-if (item.choices) {
-  Object.values(item.choices).forEach(v => {
-    opts += v + ", ";
-  });
-}
+let itemsHTML = "";
+o.items.forEach(item => {
 
-        itemsHTML += `
-          <li>
-            <strong>${item.name}</strong> x${item.qty}<br>
-            <small>
-              Options: ${opts || "None"}<br>
-              Add-ons: ${item.addons?.join(", ") || "None"}
-            </small>
-          </li>
-        `;
-      });
+  let opts = "";
+  if (item.choices) {
+    Object.entries(item.choices).forEach(([k,v]) => {
+      opts += `${v}, `;
+    });
+  }
 
-      orderDiv.innerHTML = `
-        <h2>${header}</h2>
-        <div class="status">Status: ${o.status.toUpperCase()}</div>
-        <ul>${itemsHTML}</ul>
+  let addons = "None";
+  if (item.addons?.length) {
+    addons = item.addons.map(a => `${a.name} (+RM${a.price})`).join(", ");
+  }
 
-        <div class="buttons">
-          <button class="new" onclick="setStatus('${doc.id}','new')">New</button>
-          <button class="cooking" onclick="setStatus('${doc.id}','cooking')">Cooking</button>
-          <button class="ready" onclick="setStatus('${doc.id}','ready')">Ready</button>
-          <button class="done" onclick="setStatus('${doc.id}','done')">Done</button>
-        </div>
-      `;
+  itemsHTML += `
+    <li>
+      <strong>${item.name}</strong> x${item.qty}<br>
+      Unit: RM ${item.unitPrice.toFixed(2)}<br>
+      Item Total: RM ${item.itemTotal.toFixed(2)}<br>
+      <small>
+        Options: ${opts || "None"}<br>
+        Add-ons: ${addons}
+      </small>
+    </li>
+  `;
+});
+
+orderDiv.innerHTML = `
+  <h2>${header}</h2>
+
+  <div class="status">Status: ${o.status.toUpperCase()}</div>
+
+  <ul>${itemsHTML}</ul>
+
+  <hr>
+
+  <p><strong>Subtotal:</strong> RM ${o.subtotal?.toFixed(2) || "0.00"}</p>
+  <p><strong>Service (5%):</strong> RM ${o.service?.toFixed(2) || "0.00"}</p>
+  <p><strong>Tax (2%):</strong> RM ${o.tax?.toFixed(2) || "0.00"}</p>
+
+  <h3>Grand Total: RM ${o.total?.toFixed(2) || "0.00"}</h3>
+
+  <div class="buttons">
+    <button class="new" onclick="setStatus('${doc.id}','new')">New</button>
+    <button class="cooking" onclick="setStatus('${doc.id}','cooking')">Cooking</button>
+    <button class="ready" onclick="setStatus('${doc.id}','ready')">Ready</button>
+    <button class="done" onclick="setStatus('${doc.id}','done')">Done</button>
+  </div>
+`;
 
       ordersDiv.appendChild(orderDiv);
     });
