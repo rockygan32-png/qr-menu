@@ -4,6 +4,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <title>The Windmill Station</title>
+<!-- Floating Cart Button with Badge -->
+<button id="cartBtn" onclick="goToCart()">
+  🛒
+  <span id="cartBadge">0</span>
+</button>
 
 <style>
 body {
@@ -119,6 +124,49 @@ body {
 
 .food-price {
   margin-top: 5px;
+  font-weight: bold;
+}
+
+#cartBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #20dc4b; /* green */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  overflow: visible;
+  transition: transform 0.2s;
+}
+
+#cartBtn:hover {
+  transform: scale(1.1);
+}
+
+/* Badge */
+#cartBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
 }
 </style>
@@ -317,6 +365,23 @@ function goFood(name, code, price, desc, img) {
 
   window.location.href = url;
 }
+
+function goToCart() {
+  const params = new URLSearchParams(window.location.search);
+  const table = params.get("table");
+  window.location.href = `cart.html?table=${table || "TA"}`;
+}
+
+// Update badge count
+function updateCartBadge() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const badge = document.getElementById("cartBadge");
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  badge.innerText = totalItems;
+}
+
+// Initialize badge on page load
+updateCartBadge();
 </script>
 </body>
 </html>
