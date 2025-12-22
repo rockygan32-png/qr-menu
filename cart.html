@@ -4,23 +4,94 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cart</title>
+
 <style>
-  body { font-family: Arial; margin: 0; padding: 20px; background:#f9f9f9; }
-  h1 { text-align:center; }
-  .cart-item { background: white; padding: 15px; margin-bottom: 10px; border-radius:10px; }
-  .cart-item h3 { margin: 0; }
-  .cart-item p { margin: 5px 0; color: #555; }
-  .qty { display:flex; gap:10px; align-items:center; margin-top:10px; }
-  button { padding:5px 10px; cursor:pointer; }
-  .remove { background:red; color:white; border:none; border-radius:5px; }
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 20px;
+  background:#f9f9f9;
+}
+
+h1 { text-align:center; }
+
+.cart-item {
+  background: white;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius:10px;
+}
+
+.cart-item h3 { margin: 0; }
+
+.cart-item p {
+  margin: 5px 0;
+  color: #555;
+  font-size:14px;
+}
+
+button {
+  padding:8px 12px;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.remove {
+  background:red;
+  color:white;
+  border:none;
+}
+
+.summary {
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  margin-top:15px;
+}
+
+.summary div {
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
+}
+
+.actions {
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.checkout {
+  flex:1;
+  background:#111;
+  color:white;
+  border:none;
+}
+
+.addmore {
+  flex:1;
+  background:#ddd;
+  border:none;
+}
 </style>
 </head>
+
 <body>
 
 <h1>Your Cart</h1>
 <div id="cart"></div>
-<h2 id="total"></h2>
-<button onclick="checkout()">Checkout</button>
+
+<div class="summary">
+  <div><span>Subtotal</span><span id="subtotal">RM 0.00</span></div>
+  <div><span>Service Charge (5%)</span><span id="service">RM 0.00</span></div>
+  <div><span>Tax (2%)</span><span id="tax">RM 0.00</span></div>
+  <div><strong>Grand Total</strong><strong id="grand">RM 0.00</strong></div>
+</div>
+
+<div class="actions">
+  <button class="addmore" onclick="goBack()">Add Items</button>
+  <button class="checkout" onclick="checkout()">Checkout</button>
+</div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -39,6 +110,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 </script>
+
 <script>
 const params = new URLSearchParams(window.location.search);
 const table = params.get("table");
@@ -47,33 +119,58 @@ const type = localStorage.getItem("orderType");
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
 const cartDiv = document.getElementById("cart");
-const totalDiv = document.getElementById("total");
 
 function renderCart() {
   cartDiv.innerHTML = "";
-  let total = 0;
+  let subtotal = 0;
 
   cart.forEach((item, i) => {
     const d = document.createElement("div");
     d.className = "cart-item";
+
+    let optionText = "";
+    for (let k in item.choices) {
+      optionText += `${k}: ${item.choices[k]}<br>`;
+    }
+
     d.innerHTML = `
-      <h3>${item.name} x${item.qty}</h3>
-      <p>Add-ons: ${item.addons.join(", ")}</p>
+      <h3>${item.name} × ${item.qty}</h3>
+      <p>${optionText}</p>
+      <p>Add-ons: ${item.addons.length ? item.addons.join(", ") : "None"}</p>
       <p>${item.total}</p>
-      <button onclick="removeItem(${i})">Remove</button>
+      <button class="remove" onclick="removeItem(${i})">Remove</button>
     `;
+
     cartDiv.appendChild(d);
 
-    total += Number(item.total.replace("Total: RM ", "")) * item.qty;
+    subtotal += Number(item.total.replace("Total: RM ", "")) * item.qty;
   });
 
-  totalDiv.innerText = "Grand Total: RM " + total.toFixed(2);
+  calculateTotal(subtotal);
+}
+
+function calculateTotal(subtotal) {
+  const service = subtotal * 0.05;
+  const tax = subtotal * 0.02;
+  let grand = subtotal + service + tax;
+
+  // Malaysia rounding to nearest 0.05
+  grand = Math.round(grand * 20) / 20;
+
+  document.getElementById("subtotal").innerText = "RM " + subtotal.toFixed(2);
+  document.getElementById("service").innerText = "RM " + service.toFixed(2);
+  document.getElementById("tax").innerText = "RM " + tax.toFixed(2);
+  document.getElementById("grand").innerText = "RM " + grand.toFixed(2);
 }
 
 function removeItem(i) {
   cart.splice(i, 1);
   localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
+}
+
+function goBack() {
+  history.back();
 }
 
 function checkout() {
