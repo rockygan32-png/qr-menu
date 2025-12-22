@@ -231,13 +231,20 @@ updatePrice();
 function addCart() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
+  let addonTotal = 0;
+  selectedAddons.forEach(a => addonTotal += a.price);
+
+  const unitPrice = food.basePrice + addonTotal;
+  const subtotal = unitPrice * qty;
+
   cart.push({
     code: food.code,
     name: food.name,
-    qty,
+    qty: qty,
+    unitPrice: unitPrice,
+    subtotal: subtotal,
     choices: selectedChoices,
-    addons: selectedAddons.map(a => a.name),
-    total: document.getElementById("price").innerText
+    addons: selectedAddons.map(a => a.name)
   });
 
   localStorage.setItem("cart", JSON.stringify(cart));
