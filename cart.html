@@ -23,6 +23,10 @@
 <button onclick="checkout()">Checkout</button>
 
 <script>
+const params = new URLSearchParams(window.location.search);
+const table = params.get("table");
+const type = localStorage.getItem("orderType");
+
 // Load cart from localStorage
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -82,16 +86,50 @@ function removeItem(index) {
 
 // Checkout (for now just alert)
 function checkout() {
-  if(cart.length === 0) {
+  if (cart.length === 0) {
     alert("Cart is empty!");
     return;
   }
+
+  db.collection("orders").add({
+    table: table || "TA",
+    type: type || "takeaway",
+    items: cart,
+    status: "new",
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    alert("Order sent to kitchen 👨‍🍳");
+    localStorage.removeItem("cart");
+    cart = [];
+    renderCart();
+  })
+  .catch(err => {
+    alert("Error sending order: " + err.message);
+  });
+}
   alert("Checkout successful!\n\n" + JSON.stringify(cart, null, 2));
   localStorage.removeItem("cart");
   cart = [];
   renderCart();
 }
 </script>
+<!-- Firebase COMPAT -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvWqwmCXk81k",
+  authDomain: "qr-menu-fe159.firebaseapp.com",
+  projectId: "qr-menu-fe159",
+  storageBucket: "qr-menu-fe159.appspot.com",
+  messagingSenderId: "105707127728",
+  appId: "1:105707127728:web:65dee4362f74b67f35cc75"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
 </body>
 </html>
