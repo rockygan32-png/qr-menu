@@ -128,22 +128,37 @@ function renderCart() {
     const d = document.createElement("div");
     d.className = "cart-item";
 
-    let optionText = "";
-    for (let k in item.choices) {
-      optionText += `${k}: ${item.choices[k]}<br>`;
+    // ---- OPTIONS SAFE RENDER ----
+    let optionText = "None";
+    if (item.choices && typeof item.choices === "object") {
+      optionText = "";
+      for (let k in item.choices) {
+        optionText += `${k}: ${item.choices[k]}<br>`;
+      }
+    }
+
+    // ---- ADDONS SAFE RENDER ----
+    let addonText = "None";
+    if (Array.isArray(item.addons) && item.addons.length) {
+      addonText = item.addons.join(", ");
     }
 
     d.innerHTML = `
       <h3>${item.name} × ${item.qty}</h3>
       <p>${optionText}</p>
-      <p>Add-ons: ${item.addons.length ? item.addons.join(", ") : "None"}</p>
+      <p>Add-ons: ${addonText}</p>
       <p>${item.total}</p>
       <button class="remove" onclick="removeItem(${i})">Remove</button>
     `;
 
     cartDiv.appendChild(d);
 
-    subtotal += Number(item.total.replace("Total: RM ", "")) * item.qty;
+    // ---- PRICE SAFE PARSE ----
+    const itemPrice = Number(
+      String(item.total).replace("Total: RM ", "")
+    ) || 0;
+
+    subtotal += itemPrice * item.qty;
   });
 
   calculateTotal(subtotal);
