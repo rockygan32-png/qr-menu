@@ -366,40 +366,22 @@ function goFood(name, code, price, desc, img) {
   window.location.href = url;
 }
 
-// Function to navigate to cart page
 function goToCart() {
-  window.location.href = "cart.html";
+  const params = new URLSearchParams(window.location.search);
+  const table = params.get("table");
+  window.location.href = `cart.html?table=${table || "TA"}`;
 }
 
-// Function to update the badge count
+// Update badge count
 function updateCartBadge() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  document.getElementById("cartBadge").innerText = cart.length;
+  const badge = document.getElementById("cartBadge");
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  badge.innerText = totalItems;
 }
 
-// Call this once on page load
+// Initialize badge on page load
 updateCartBadge();
-
-// Update badge whenever you add an item to cart
-function addCart() {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  cart.push({
-    code: food.code,
-    name: food.name,
-    qty,
-    choices: selectedChoices,
-    addons: selectedAddons.map(a => a.name),
-    total: document.getElementById("price").innerText
-  });
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-
-  // ✅ Update badge immediately
-  updateCartBadge();
-
-  alert("Added to cart 🛒");
-}
 </script>
 </body>
 </html>
