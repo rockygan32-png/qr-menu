@@ -103,7 +103,7 @@ db.collection("orders")
       const orderDiv = document.createElement("div");
       orderDiv.className = "order";
 
-      let header = o.type === "takeaway"
+      let header = o.type?.toLowerCase() === "takeaway"
         ? "🥡 Take Away"
         : "🍽️ Table " + o.table;
 
