@@ -193,9 +193,12 @@ function checkout() {
     return;
   }
 
+  const table = localStorage.getItem("table"); // read table number
+  const type = localStorage.getItem("orderType"); // read order type
+
   db.collection("orders").add({
-    table: table ? Number(table) : null,
-type: type,
+    table: table || null, // null if no table
+    type: type || "takeaway",
     items: cart,
     status: "new",
     time: firebase.firestore.FieldValue.serverTimestamp()
