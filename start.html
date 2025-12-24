@@ -61,17 +61,19 @@
   const table = params.get("table");
 
   function choose(type) {
-    let url = "order.html";
+    // Save order type globally
+    localStorage.setItem("orderType", type);
 
-    if (table) {
-      url += "?table=" + table + "&type=" + type;
+    if (type === "dinein" && table) {
+      // Save table for dine-in
+      localStorage.setItem("table", table);
+      window.location.href = "order.html?table=" + table;
     } else {
-      url += "?type=" + type;
+      // Takeaway
+      localStorage.removeItem("table");
+      window.location.href = "order.html";
     }
-
-    window.location.href = url;
   }
 </script>
-
 </body>
 </html>
