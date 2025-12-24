@@ -114,7 +114,10 @@ const db = firebase.firestore();
 <script>
 const params = new URLSearchParams(window.location.search);
 const table = params.get("table");
-const type = localStorage.getItem("orderType");
+const params = new URLSearchParams(window.location.search);
+const table = params.get("table");
+
+const type = table ? "dinein" : "takeaway";
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
