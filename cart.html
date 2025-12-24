@@ -112,12 +112,9 @@ const db = firebase.firestore();
 </script>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const table = params.get("table");
-const params = new URLSearchParams(window.location.search);
-const table = params.get("table");
-
-const type = table ? "dinein" : "takeaway";
+const table = localStorage.getItem("table");
+const type = localStorage.getItem("orderType");
+const type = localStorage.getItem("orderType");
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -198,8 +195,8 @@ function checkout() {
   }
 
   db.collection("orders").add({
-    table: table || "TA",
-    type: type || "takeaway",
+    table: table ? Number(table) : null,
+type: type,
     items: cart,
     status: "new",
     time: firebase.firestore.FieldValue.serverTimestamp()

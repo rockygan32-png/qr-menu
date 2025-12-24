@@ -310,13 +310,28 @@ function showDetail(item) {
 
 /* URL PARAMS */
 const params = new URLSearchParams(window.location.search);
-const table = params.get("table");
-const type = params.get("type");
 
-if (type === "dinein" && table) {
-  document.getElementById("tableInfo").innerText = "🍽️ Table " + table;
-} else if (type === "takeaway") {
-  document.getElementById("tableInfo").innerText = "🥡 Take Away";
+let table = localStorage.getItem("table");
+let type = localStorage.getItem("orderType");
+
+// First entry only
+if (!table && params.get("table")) {
+  table = params.get("table");
+  localStorage.setItem("table", table);
+}
+
+if (!type && params.get("type")) {
+  type = params.get("type");
+  localStorage.setItem("orderType", type);
+}
+const tableInfo = document.getElementById("tableInfo");
+
+if (table) {
+  tableInfo.innerText =
+    (type === "takeaway" ? "🥡 Take Away" : "🍽️ Dine In") +
+    " • Table " + table;
+} else {
+  tableInfo.innerText = "🥡 Take Away";
 }
 </script>
 
@@ -367,9 +382,7 @@ function goFood(name, code, price, desc, img) {
 }
 
 function goToCart() {
-  const params = new URLSearchParams(window.location.search);
-  const table = params.get("table");
-  window.location.href = `cart.html?table=${table || "TA"}`;
+  window.location.href = "cart.html";
 }
 
 // Update badge count
