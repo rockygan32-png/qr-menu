@@ -64,23 +64,18 @@
     // Save order type globally
     localStorage.setItem("orderType", type);
 
-    let tableNum = "";
+    let url = "order.html";
 
-    if (type === "dinein" && table) {
-      // Save table for dine-in
-      tableNum = table;
-      localStorage.setItem("table", tableNum);
-    } else if (type === "takeaway") {
-      // Generate unique table number for takeaway
-      let lastTA = localStorage.getItem("lastTakeawayNumber") || 0;
-      lastTA = Number(lastTA) + 1;
-      localStorage.setItem("lastTakeawayNumber", lastTA);
-      tableNum = "TA" + lastTA;
-      localStorage.setItem("table", tableNum);
+    if (table) {
+      // Always save table if it exists
+      localStorage.setItem("table", table);
+      url += "?table=" + table + "&type=" + type; // append table even for takeaway
+    } else {
+      url += "?type=" + type; // no table number
     }
 
-    // Redirect with table number and type
-    window.location.href = "order.html?table=" + tableNum + "&type=" + type;
+    // Redirect to order page
+    window.location.href = url;
   }
 </script>
 </body>
