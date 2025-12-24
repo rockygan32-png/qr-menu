@@ -70,7 +70,9 @@
       window.location.href = "order.html?table=" + table;
     } else {
       // Takeaway
-      localStorage.removeItem("table");
+      if (table) {
+  localStorage.setItem("table", table);
+}
       window.location.href = "order.html";
     }
   }
