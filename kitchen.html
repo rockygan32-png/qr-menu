@@ -89,22 +89,17 @@ const db = firebase.firestore();
 
 const ordersDiv = document.getElementById("orders");
 let latestSnapshot = null;
+let knownOrderIds = new Set(); // track existing orders
 
 /* ================== STATUS UPDATE ================== */
 function setStatus(id, status) {
   if (status === "done") {
-    // Delete the order
     db.collection("orders").doc(id).delete()
-      .then(() => {
-        console.log("Order deleted");
-      })
+      .then(() => console.log("Order deleted"))
       .catch(err => console.error(err));
   } else {
-    // Update status normally
     db.collection("orders").doc(id).update({ status })
-      .then(() => {
-        console.log("Status updated");
-      })
+      .then(() => console.log("Status updated"))
       .catch(err => console.error(err));
   }
 }
@@ -112,7 +107,6 @@ function setStatus(id, status) {
 /* ================== TIME AGO ================== */
 function timeAgo(timestamp) {
   if (!timestamp) return "";
-
   const now = new Date();
   const orderTime = timestamp.toDate();
   const diffSec = Math.floor((now - orderTime) / 1000);
@@ -120,7 +114,6 @@ function timeAgo(timestamp) {
   if (diffSec < 60) return "Just now";
   if (diffSec < 3600) return `${Math.floor(diffSec / 60)} min ago`;
   if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hr ago`;
-
   return `${Math.floor(diffSec / 86400)} day ago`;
 }
 
@@ -131,15 +124,19 @@ function renderOrders(snapshot) {
   snapshot.forEach(doc => {
     const o = doc.data();
 
+    // New order sound
+    if (!knownOrderIds.has(doc.id) && o.status === "new") {
+      playSound();
+    }
+    knownOrderIds.add(doc.id);
+
     const orderDiv = document.createElement("div");
     orderDiv.className = "order";
 
-    /* ----- HEADER (FIXED TAKEAWAY + TABLE) ----- */
+    /* ----- HEADER (TAKEAWAY + TABLE) ----- */
     let header = "";
     if (o.type?.toLowerCase() === "takeaway") {
-      header = o.table
-        ? `🥡 Take Away (Table ${o.table})`
-        : "🥡 Take Away";
+      header = o.table ? `🥡 Take Away (Table ${o.table})` : "🥡 Take Away";
     } else {
       header = `🍽️ Table ${o.table}`;
     }
@@ -149,9 +146,7 @@ function renderOrders(snapshot) {
     o.items.forEach(item => {
       let opts = "";
       if (item.choices) {
-        Object.values(item.choices).forEach(v => {
-          opts += v + ", ";
-        });
+        Object.values(item.choices).forEach(v => { opts += v + ", "; });
       }
 
       itemsHTML += `
@@ -170,8 +165,7 @@ function renderOrders(snapshot) {
     orderDiv.innerHTML = `
       <h2>${header}</h2>
       <div class="status">
-        Status: ${o.status.toUpperCase()}
-        ${ago ? ` • 🕒 ${ago}` : ""}
+        Status: ${o.status.toUpperCase()} ${ago ? `• 🕒 ${ago}` : ""}
       </div>
 
       <ul>${itemsHTML}</ul>
@@ -198,10 +192,14 @@ db.collection("orders")
 
 /* ================== AUTO TIME REFRESH ================== */
 setInterval(() => {
-  if (latestSnapshot) {
-    renderOrders(latestSnapshot);
-  }
-}, 30000); // update every 30 seconds
+  if (latestSnapshot) renderOrders(latestSnapshot);
+}, 30000); // every 30 sec
+
+/* ================== SOUND ================== */
+function playSound() {
+  const audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"); // you can replace with any sound
+  audio.play().catch(e => console.warn("Sound blocked:", e));
+}
 </script>
 </body>
 </html>
