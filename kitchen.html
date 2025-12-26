@@ -92,7 +92,21 @@ let latestSnapshot = null;
 
 /* ================== STATUS UPDATE ================== */
 function setStatus(id, status) {
-  db.collection("orders").doc(id).update({ status });
+  if (status === "done") {
+    // Delete the order
+    db.collection("orders").doc(id).delete()
+      .then(() => {
+        console.log("Order deleted");
+      })
+      .catch(err => console.error(err));
+  } else {
+    // Update status normally
+    db.collection("orders").doc(id).update({ status })
+      .then(() => {
+        console.log("Status updated");
+      })
+      .catch(err => console.error(err));
+  }
 }
 
 /* ================== TIME AGO ================== */
