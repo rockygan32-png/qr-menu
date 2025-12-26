@@ -74,6 +74,7 @@ h1 {
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
+/* ================== FIREBASE ================== */
 const firebaseConfig = {
   apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvW",
   authDomain: "qr-menu-fe159.firebaseapp.com",
@@ -87,85 +88,106 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const ordersDiv = document.getElementById("orders");
+let latestSnapshot = null;
 
+/* ================== STATUS UPDATE ================== */
 function setStatus(id, status) {
   db.collection("orders").doc(id).update({ status });
 }
 
-/* ===== TIME AGO HELPER ===== */
+/* ================== TIME AGO ================== */
 function timeAgo(timestamp) {
   if (!timestamp) return "";
-  const now = Date.now();
-  const then = timestamp.toDate().getTime();
-  const diff = Math.floor((now - then) / 1000);
 
-  if (diff < 60) return `${diff}s ago`;
-  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
-  return `${Math.floor(diff / 86400)} day ago`;
+  const now = new Date();
+  const orderTime = timestamp.toDate();
+  const diffSec = Math.floor((now - orderTime) / 1000);
+
+  if (diffSec < 60) return "Just now";
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} min ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hr ago`;
+
+  return `${Math.floor(diffSec / 86400)} day ago`;
 }
 
+/* ================== RENDER ORDERS ================== */
+function renderOrders(snapshot) {
+  ordersDiv.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const o = doc.data();
+
+    const orderDiv = document.createElement("div");
+    orderDiv.className = "order";
+
+    /* ----- HEADER (FIXED TAKEAWAY + TABLE) ----- */
+    let header = "";
+    if (o.type?.toLowerCase() === "takeaway") {
+      header = o.table
+        ? `🥡 Take Away (Table ${o.table})`
+        : "🥡 Take Away";
+    } else {
+      header = `🍽️ Table ${o.table}`;
+    }
+
+    /* ----- ITEMS ----- */
+    let itemsHTML = "";
+    o.items.forEach(item => {
+      let opts = "";
+      if (item.choices) {
+        Object.values(item.choices).forEach(v => {
+          opts += v + ", ";
+        });
+      }
+
+      itemsHTML += `
+        <li>
+          <strong>${item.name}</strong> x${item.qty}<br>
+          <small>
+            Options: ${opts || "None"}<br>
+            Add-ons: ${item.addons?.join(", ") || "None"}
+          </small>
+        </li>
+      `;
+    });
+
+    const ago = timeAgo(o.time);
+
+    orderDiv.innerHTML = `
+      <h2>${header}</h2>
+      <div class="status">
+        Status: ${o.status.toUpperCase()}
+        ${ago ? ` • 🕒 ${ago}` : ""}
+      </div>
+
+      <ul>${itemsHTML}</ul>
+
+      <div class="buttons">
+        <button class="new" onclick="setStatus('${doc.id}','new')">New</button>
+        <button class="cooking" onclick="setStatus('${doc.id}','cooking')">Cooking</button>
+        <button class="ready" onclick="setStatus('${doc.id}','ready')">Ready</button>
+        <button class="done" onclick="setStatus('${doc.id}','done')">Done</button>
+      </div>
+    `;
+
+    ordersDiv.appendChild(orderDiv);
+  });
+}
+
+/* ================== FIRESTORE LISTENER ================== */
 db.collection("orders")
   .orderBy("time", "asc")
   .onSnapshot(snapshot => {
-    ordersDiv.innerHTML = "";
-
-    snapshot.forEach(doc => {
-      const o = doc.data();
-
-      const orderDiv = document.createElement("div");
-      orderDiv.className = "order";
-
-      let header = "";
-      if (o.type?.toLowerCase() === "takeaway") {
-        header = o.table
-          ? `🥡 Take Away (Table ${o.table})`
-          : "🥡 Take Away";
-      } else {
-        header = `🍽️ Table ${o.table}`;
-      }
-
-      let itemsHTML = "";
-      o.items.forEach(item => {
-        let opts = "";
-        if (item.choices) {
-          Object.values(item.choices).forEach(v => {
-            opts += v + ", ";
-          });
-        }
-
-        itemsHTML += `
-          <li>
-            <strong>${item.name}</strong> x${item.qty}<br>
-            <small>
-              Options: ${opts || "None"}<br>
-              Add-ons: ${item.addons?.join(", ") || "None"}
-            </small>
-          </li>
-        `;
-      });
-
-      const timeText = timeAgo(o.time);
-
-      orderDiv.innerHTML = `
-        <h2>${header}</h2>
-        <div class="status">
-          Status: ${o.status.toUpperCase()}
-          ${timeText ? ` • 🕒 ${timeText}` : ""}
-        </div>
-        <ul>${itemsHTML}</ul>
-
-        <div class="buttons">
-          <button class="new" onclick="setStatus('${doc.id}','new')">New</button>
-          <button class="cooking" onclick="setStatus('${doc.id}','cooking')">Cooking</button>
-          <button class="ready" onclick="setStatus('${doc.id}','ready')">Ready</button>
-          <button class="done" onclick="setStatus('${doc.id}','done')">Done</button>
-        </div>
-      `;
-
-      ordersDiv.appendChild(orderDiv);
-    });
+    latestSnapshot = snapshot;
+    renderOrders(snapshot);
   });
+
+/* ================== AUTO TIME REFRESH ================== */
+setInterval(() => {
+  if (latestSnapshot) {
+    renderOrders(latestSnapshot);
+  }
+}, 30000); // update every 30 seconds
 </script>
 </body>
 </html>
