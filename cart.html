@@ -197,19 +197,19 @@ function checkout() {
   const type = localStorage.getItem("orderType"); // read order type
 
   db.collection("orders").add({
-    table: table || null, // null if no table
-    type: type || "takeaway",
-    items: cart,
-    status: "new",
-    time: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
-    alert("Order sent to kitchen 👨‍🍳");
-    localStorage.removeItem("cart");
-    cart = [];
-    renderCart();
-  })
-  .catch(e => alert(e.message));
+  table: table || null, // null if no table
+  type: type || "takeaway",
+  items: cart,
+  status: "new",
+  time: firebase.firestore.FieldValue.serverTimestamp()
+})
+.then(docRef => {
+  localStorage.removeItem("cart");
+  cart = [];
+
+  window.location.href = "receipt.html?orderId=" + docRef.id;
+})
+.catch(e => alert(e.message));
 }
 
 renderCart();

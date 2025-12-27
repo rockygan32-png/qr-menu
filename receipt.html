@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Receipt</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 15px;
+}
+
+.receipt {
+  background: white;
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.center {
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+hr {
+  border: none;
+  border-top: 1px dashed #ccc;
+  margin: 15px 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.item {
+  margin-bottom: 10px;
+}
+
+.item-name {
+  font-weight: bold;
+}
+
+.item-addon {
+  font-size: 13px;
+  color: #555;
+  margin-left: 10px;
+}
+
+.total {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 13px;
+  margin-top: 15px;
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="receipt">
+  <h1>🧾 Receipt</h1>
+  <div class="center" id="orderInfo"></div>
+  <div class="center" id="dateTime"></div>
+
+  <hr>
+
+  <div id="items"></div>
+
+  <hr>
+
+  <div class="row"><span>Subtotal</span><span id="subtotal"></span></div>
+  <div class="row"><span>Service Charge (5%)</span><span id="service"></span></div>
+  <div class="row"><span>Tax (2%)</span><span id="tax"></span></div>
+  <div class="row total"><span>Grand Total</span><span id="grand"></span></div>
+
+  <div class="footer">
+    Thank you for dining with us ❤️
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+/* ===== FIREBASE ===== */
+firebase.initializeApp({
+  apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvW",
+  authDomain: "qr-menu-fe159.firebaseapp.com",
+  projectId: "qr-menu-fe159"
+});
+
+const db = firebase.firestore();
+
+/* ===== GET ORDER ID ===== */
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get("orderId");
+
+if (!orderId) {
+  alert("Invalid receipt");
+}
+
+/* ===== HELPERS ===== */
+function formatTime(timestamp) {
+  const d = timestamp.toDate();
+  return d.toLocaleString("en-MY", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+/* ===== LOAD ORDER ===== */
+db.collection("orders").doc(orderId).get().then(doc => {
+  if (!doc.exists) {
+    alert("Order not found");
+    return;
+  }
+
+  const o = doc.data();
+
+  /* ---- HEADER INFO ---- */
+  let header = "";
+  if (o.type === "takeaway") {
+    header = o.table
+      ? `🥡 Take Away (Table ${o.table})`
+      : "🥡 Take Away";
+  } else {
+    header = `🍽️ Table ${o.table}`;
+  }
+
+  document.getElementById("orderInfo").innerText = header;
+  document.getElementById("dateTime").innerText = formatTime(o.time);
+
+  /* ---- ITEMS ---- */
+  let subtotal = 0;
+  const itemsDiv = document.getElementById("items");
+
+  o.items.forEach(item => {
+    const price = Number(
+      String(item.total).replace("Total: RM ", "")
+    ) || 0;
+
+    subtotal += price * item.qty;
+
+    const div = document.createElement("div");
+    div.className = "item";
+
+    let addons = "";
+    if (item.addons && item.addons.length) {
+      addons = `<div class="item-addon">Add-ons: ${item.addons.join(", ")}</div>`;
+    }
+
+    div.innerHTML = `
+      <div class="row">
+        <span class="item-name">${item.name} (x${item.qty})</span>
+        <span>RM ${(price * item.qty).toFixed(2)}</span>
+      </div>
+      ${addons}
+    `;
+
+    itemsDiv.appendChild(div);
+  });
+
+  /* ---- TOTALS ---- */
+  const service = subtotal * 0.05;
+  const tax = subtotal * 0.02;
+  let grand = subtotal + service + tax;
+
+  // Malaysia rounding
+  grand = Math.round(grand * 20) / 20;
+
+  document.getElementById("subtotal").innerText = "RM " + subtotal.toFixed(2);
+  document.getElementById("service").innerText = "RM " + service.toFixed(2);
+  document.getElementById("tax").innerText = "RM " + tax.toFixed(2);
+  document.getElementById("grand").innerText = "RM " + grand.toFixed(2);
+});
+</script>
+
+</body>
+</html>
