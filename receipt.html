@@ -195,6 +195,48 @@ db.collection("orders").doc(orderId).get().then(doc => {
   document.getElementById("grand").innerText = "RM " + grand.toFixed(2);
 });
 </script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get("orderId");
 
+document.getElementById("continueBtn").onclick = async () => {
+  if (!orderId) {
+    window.location.href = "start.html";
+    return;
+  }
+
+  const doc = await db.collection("orders").doc(orderId).get();
+  if (!doc.exists) {
+    window.location.href = "start.html";
+    return;
+  }
+
+  const o = doc.data();
+
+  // Save order type
+  localStorage.setItem("orderType", o.type);
+
+  // Redirect with table number if exists
+  if (o.table) {
+    localStorage.setItem("table", o.table);
+    window.location.href = "order.html?table=" + o.table;
+  } else {
+    window.location.href = "order.html";
+  }
+};
+</script>
+<div style="margin-top: 30px; text-align: center;">
+  <button id="continueBtn" style="
+    padding: 14px 22px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+  ">
+    ➕ Continue Ordering
+  </button>
+</div>
 </body>
 </html>
