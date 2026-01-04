@@ -245,8 +245,7 @@ body {
 <h2>Burgers</h2>
 <div class="grid">
 
-<div class="food-card"
-data-search="chicken burger a01"
+<div class="food-card" data-search="chicken burger a01"
  onclick="goFood(
   'Chicken Burger',
   'A01',
@@ -261,7 +260,13 @@ data-search="chicken burger a01"
   </div>
 </div>
 
-<div class="food-card" onclick="showDetail('Beef Burger')">
+<div class="food-card" data-search="beef burger a02" onclick="goFood(
+  'Beef Burger',
+  'A02',
+  18,
+  'Tender beef patty with fresh lettuce and tomato',
+  'https://images.unsplash.com/photo-1550547660-d9450f859349'
+)">
   <img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
   <div class="food-info">
     <div class="food-title">Beef Burger <span class="food-code">(A02)</span></div>
@@ -277,7 +282,13 @@ data-search="chicken burger a01"
 <h2>Pasta</h2>
 <div class="grid">
 
-<div class="food-card" onclick="showDetail('Carbonara')">
+<div class="food-card" data-search="carbonara b01" onclick="goFood(
+  'Carbonara',
+  'B01',
+  20,
+  'Creamy carbonara with bacon and parmesan',
+  'https://images.unsplash.com/photo-1589307004391-3c46a6f0f8d8'
+)">
   <img src="https://images.unsplash.com/photo-1589307004391-3c46a6f0f8d8">
   <div class="food-info">
     <div class="food-title">Carbonara <span class="food-code">(B01)</span></div>
@@ -285,7 +296,13 @@ data-search="chicken burger a01"
   </div>
 </div>
 
-<div class="food-card" onclick="showDetail('Aglio Olio')">
+<div class="food-card" data-search="aglio olio b02" onclick="goFood(
+  'Aglio Olio',
+  'B02',
+  18,
+  'Classic garlic pasta with olive oil and chili flakes',
+  'https://images.unsplash.com/photo-1525755662778-989d0524087e'
+)">
   <img src="https://images.unsplash.com/photo-1525755662778-989d0524087e">
   <div class="food-info">
     <div class="food-title">Aglio Olio <span class="food-code">(B02)</span></div>
@@ -299,28 +316,35 @@ data-search="chicken burger a01"
 <!-- ===== ASIAN CUISINE ===== -->
 <div class="section" id="asian">
 <h2>Asian Cuisine</h2>
-
 <div class="grid">
 
-  <div class="food-card" onclick="showDetail('Nasi Lemak')">
-    <img src="https://images.unsplash.com/photo-1604908554166-5e7c4f2f1e62">
-    <div class="food-info">
-      <div class="food-title">
-        Nasi Lemak <span class="food-code">(C01)</span>
-      </div>
-      <div class="food-price">RM 12</div>
-    </div>
+<div class="food-card" data-search="nasi lemak c01" onclick="goFood(
+  'Nasi Lemak',
+  'C01',
+  12,
+  'Traditional Malaysian coconut rice with sambal and anchovies',
+  'https://images.unsplash.com/photo-1604908554166-5e7c4f2f1e62'
+)">
+  <img src="https://images.unsplash.com/photo-1604908554166-5e7c4f2f1e62">
+  <div class="food-info">
+    <div class="food-title">Nasi Lemak <span class="food-code">(C01)</span></div>
+    <div class="food-price">RM 12</div>
   </div>
+</div>
 
-  <div class="food-card" onclick="showDetail('Nasi Goreng')">
-    <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec">
-    <div class="food-info">
-      <div class="food-title">
-        Nasi Goreng <span class="food-code">(C02)</span>
-      </div>
-      <div class="food-price">RM 13</div>
-    </div>
+<div class="food-card" data-search="nasi goreng c02" onclick="goFood(
+  'Nasi Goreng',
+  'C02',
+  13,
+  'Fried rice with vegetables and choice of meat',
+  'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec'
+)">
+  <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec">
+  <div class="food-info">
+    <div class="food-title">Nasi Goreng <span class="food-code">(C02)</span></div>
+    <div class="food-price">RM 13</div>
   </div>
+</div>
 
 </div>
 </div>
@@ -330,7 +354,13 @@ data-search="chicken burger a01"
 <h2>Drinks</h2>
 <div class="grid">
 
-<div class="food-card" onclick="showDetail('Coke')">
+<div class="food-card" data-search="coke d01" onclick="goFood(
+  'Coke',
+  'D01',
+  5,
+  'Classic Coca-Cola served chilled',
+  'https://images.unsplash.com/photo-1622483767028-3f66f32b1c31'
+)">
   <img src="https://images.unsplash.com/photo-1622483767028-3f66f32b1c31">
   <div class="food-info">
     <div class="food-title">Coke <span class="food-code">(D01)</span></div>
@@ -338,7 +368,13 @@ data-search="chicken burger a01"
   </div>
 </div>
 
-<div class="food-card" onclick="showDetail('Lemon Tea')">
+<div class="food-card" data-search="lemon tea d02" onclick="goFood(
+  'Lemon Tea',
+  'D02',
+  6,
+  'Refreshing lemon tea',
+  'https://images.unsplash.com/photo-1556679343-c7306c1976bc'
+)">
   <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc">
   <div class="food-info">
     <div class="food-title">Lemon Tea <span class="food-code">(D02)</span></div>
@@ -348,7 +384,6 @@ data-search="chicken burger a01"
 
 </div>
 </div>
-
 <script>
 function scrollToSection(id) {
   document.getElementById(id).scrollIntoView({ behavior: "smooth" });

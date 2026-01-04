@@ -116,6 +116,7 @@ button {
 <script>
 // ================= FOOD CONFIG =================
 const FOOD_DATA = {
+  // BURGERS
   A01: {
     name: "Chicken Burger",
     code: "A01",
@@ -132,6 +133,136 @@ const FOOD_DATA = {
         { name: "Extra Cheese", price: 2 },
         { name: "Extra Egg", price: 1 },
         { name: "Extra Black Pepper Sauce", price: 0.5 }
+      ]
+    }
+  },
+
+  A02: {
+    name: "Beef Burger",
+    code: "A02",
+    desc: "Tender beef patty with fresh lettuce and tomato",
+    img: "https://images.unsplash.com/photo-1550547660-d9450f859349",
+    basePrice: 18,
+    options: {
+      choices: [
+        { label: "Spicy Level", name: "spicy", values: ["Not Spicy", "Spicy"] },
+        { label: "Cheese", name: "cheese", values: ["No Cheese", "Cheese"] },
+        { label: "Lettuce", name: "lettuce", values: ["No Lettuce", "Lettuce"] }
+      ],
+      addons: [
+        { name: "Extra Cheese", price: 2 },
+        { name: "Extra Bacon", price: 3 },
+        { name: "Extra BBQ Sauce", price: 1 }
+      ]
+    }
+  },
+
+  // PASTA
+  B01: {
+    name: "Carbonara",
+    code: "B01",
+    desc: "Creamy carbonara with bacon and parmesan",
+    img: "https://images.unsplash.com/photo-1589307004391-3c46a6f0f8d8",
+    basePrice: 20,
+    options: {
+      choices: [
+        { label: "Spicy", name: "spicy", values: ["Not Spicy", "Spicy"] },
+        { label: "Pasta Type", name: "type", values: ["Spaghetti", "Fettuccine"] }
+      ],
+      addons: [
+        { name: "Extra Cheese", price: 2 },
+        { name: "Extra Bacon", price: 3 }
+      ]
+    }
+  },
+
+  B02: {
+    name: "Aglio Olio",
+    code: "B02",
+    desc: "Classic garlic pasta with olive oil and chili flakes",
+    img: "https://images.unsplash.com/photo-1525755662778-989d0524087e",
+    basePrice: 18,
+    options: {
+      choices: [
+        { label: "Spicy", name: "spicy", values: ["Not Spicy", "Spicy"] },
+        { label: "Pasta Type", name: "type", values: ["Spaghetti", "Fettuccine"] }
+      ],
+      addons: [
+        { name: "Extra Cheese", price: 2 },
+        { name: "Extra Garlic", price: 0.5 }
+      ]
+    }
+  },
+
+  // ASIAN CUISINE
+  C01: {
+    name: "Nasi Lemak",
+    code: "C01",
+    desc: "Traditional Malaysian coconut rice with sambal and anchovies",
+    img: "https://images.unsplash.com/photo-1604908554166-5e7c4f2f1e62",
+    basePrice: 12,
+    options: {
+      choices: [
+        { label: "Spicy Level", name: "spicy", values: ["Mild", "Medium", "Hot"] },
+        { label: "Extra Egg", name: "egg", values: ["No Egg", "Egg"] }
+      ],
+      addons: [
+        { name: "Extra Sambal", price: 1 },
+        { name: "Extra Chicken", price: 4 }
+      ]
+    }
+  },
+
+  C02: {
+    name: "Nasi Goreng",
+    code: "C02",
+    desc: "Fried rice with vegetables and choice of meat",
+    img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec",
+    basePrice: 13,
+    options: {
+      choices: [
+        { label: "Meat", name: "meat", values: ["Chicken", "Beef", "Shrimp"] },
+        { label: "Spicy Level", name: "spicy", values: ["Mild", "Medium", "Hot"] }
+      ],
+      addons: [
+        { name: "Extra Egg", price: 1 },
+        { name: "Extra Meat", price: 3 }
+      ]
+    }
+  },
+
+  // DRINKS
+  D01: {
+    name: "Coke",
+    code: "D01",
+    desc: "Classic Coca-Cola served chilled",
+    img: "https://images.unsplash.com/photo-1622483767028-3f66f32b1c31",
+    basePrice: 5,
+    options: {
+      choices: [
+        { label: "Ice", name: "ice", values: ["No Ice", "Ice"] },
+        { label: "Sugar", name: "sugar", values: ["No Sugar", "Normal Sugar", "Less Sugar"] }
+      ],
+      addons: [
+        { name: "Extra Ice", price: 0.5 }
+      ]
+    }
+  },
+
+  D02: {
+    name: "Lemon Tea",
+    code: "D02",
+    desc: "Refreshing lemon tea",
+    img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc",
+    basePrice: 6,
+    options: {
+      choices: [
+        { label: "Ice", name: "ice", values: ["No Ice", "Ice"] },
+        { label: "Sugar", name: "sugar", values: ["No Sugar", "Normal Sugar", "Less Sugar"] }
+      ],
+      addons: [
+        { name: "Extra Lemon", price: 1 },
+        { name: "Extra Ice", price: 0.5 }
       ]
     }
   }
