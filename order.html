@@ -54,7 +54,7 @@ body {
   padding: 10px;
 
   position: sticky;
-  top: 60px; /* height of top bar */
+  top: 115px; /* height of top bar */
   z-index: 150;
 }
 
@@ -169,6 +169,41 @@ body {
   justify-content: center;
   font-weight: bold;
 }
+
+.food-card {
+  display: block; /* ensure JS can show/hide properly */
+}
+
+/* ===== SEARCH BAR ===== */
+.search-bar {
+  position: sticky;
+  top: 60px; /* below top bar */
+  z-index: 180;
+  background: #111; /* match top bar */
+  padding: 10px 15px;
+  border-bottom: 1px solid #333;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 30px;
+  border: 1px solid #555;
+  background: #222;
+  color: white;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-bar input::placeholder {
+  color: #ccc;
+}
+
+.search-bar input:focus {
+  border-color: gold;  /* highlight gold */
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3); /* subtle gold shadow */
+}
 </style>
 </head>
 
@@ -183,6 +218,15 @@ body {
   <div class="order-info" id="tableInfo"></div>
 </div>
 
+<!-- ===== SEARCH BAR ===== -->
+<div class="search-bar">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="🔍 Search by food name or code..."
+    onkeyup="searchFood()"
+  >
+</div>
 <!-- ===== CATEGORY BAR ===== -->
 <div class="category-bar">
   <button data-target="burger" onclick="scrollToSection('burger')">🍔 Burgers</button>
@@ -197,6 +241,7 @@ body {
 <div class="grid">
 
 <div class="food-card"
+data-search="chicken burger a01"
  onclick="goFood(
   'Chicken Burger',
   'A01',
@@ -397,6 +442,21 @@ function updateCartBadge() {
 updateCartBadge();
 // Update cart badge every 500ms
 setInterval(updateCartBadge, 500);
+</script>
+<script>
+function searchFood() {
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+  const foods = document.querySelectorAll(".food-card");
+
+  foods.forEach(food => {
+    const text = food.getAttribute("data-search");
+    if (text.includes(keyword)) {
+      food.style.display = "block";
+    } else {
+      food.style.display = "none";
+    }
+  });
+}
 </script>
 </body>
 </html>
