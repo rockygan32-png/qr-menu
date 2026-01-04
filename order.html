@@ -179,9 +179,12 @@ body {
   position: sticky;
   top: 60px; /* below top bar */
   z-index: 180;
-  background: #111; /* match top bar */
+  background: #111;
   padding: 10px 15px;
   border-bottom: 1px solid #333;
+
+  max-width: 100%; /* prevent overflow */
+  overflow-x: hidden; /* hide accidental scroll */
 }
 
 .search-bar input {
@@ -194,6 +197,8 @@ body {
   color: white;
   outline: none;
   transition: all 0.2s;
+
+  box-sizing: border-box;  /* ✅ ensures padding and border stay inside width */
 }
 
 .search-bar input::placeholder {
