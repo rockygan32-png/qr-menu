@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.food {
+  background: white;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.food span {
+  font-weight: bold;
+}
+
+button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}
+
+.on { background: red; }
+.off { background: green; }
+</style>
+</head>
+
+<body>
+
+<h1>Admin – Food Availability</h1>
+<div id="list"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvW",
+  authDomain: "qr-menu-fe159.firebaseapp.com",
+  projectId: "qr-menu-fe159"
+});
+
+const db = firebase.firestore();
+const list = document.getElementById("list");
+
+db.collection("foods").orderBy("code").onSnapshot(snapshot => {
+  list.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const food = doc.data();
+
+    const div = document.createElement("div");
+    div.className = "food";
+
+    div.innerHTML = `
+      <span>${food.name} (${food.code})</span>
+      <button class="${food.unavailable ? 'off' : 'on'}">
+        ${food.unavailable ? 'Make Available' : 'Make Unavailable'}
+      </button>
+    `;
+
+    div.querySelector("button").onclick = () => {
+      db.collection("foods").doc(doc.id).update({
+        unavailable: !food.unavailable
+      });
+    };
+
+    list.appendChild(div);
+  });
+});
+</script>
+
+</body>
+</html>
