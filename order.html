@@ -541,5 +541,57 @@ searchInput.addEventListener("input", () => {
   clearBtn.style.display = searchInput.value ? "block" : "none";
 });
 </script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvWqwmCXk81k",
+  authDomain: "qr-menu-fe159.firebaseapp.com",
+  projectId: "qr-menu-fe159"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Load availability data
+db.collection("foods").onSnapshot((snapshot) => {
+  snapshot.forEach(doc => {
+    const food = doc.data();
+    const card = document.querySelector(`.food-card[data-search*='${food.code.toLowerCase()}']`);
+
+    if (card) {
+      if (food.unavailable) {
+        card.style.opacity = 0.5; // faded look
+        card.style.pointerEvents = "none"; // disable click
+
+        // Add "Unavailable" label if not exists
+        if (!card.querySelector(".unavailable-label")) {
+          const label = document.createElement("div");
+          label.className = "unavailable-label";
+          label.innerText = "Unavailable";
+          label.style.position = "absolute";
+          label.style.top = "50%";
+          label.style.left = "50%";
+          label.style.transform = "translate(-50%, -50%)";
+          label.style.background = "rgba(0,0,0,0.7)";
+          label.style.color = "white";
+          label.style.padding = "2px 6px";
+          label.style.borderRadius = "4px";
+          label.style.fontWeight = "bold";
+          card.appendChild(label);
+        }
+      } else {
+        card.style.opacity = 1;
+        card.style.pointerEvents = "auto";
+
+        const label = card.querySelector(".unavailable-label");
+        if (label) label.remove();
+      }
+    }
+  });
+});
+</script>
 </body>
 </html>
