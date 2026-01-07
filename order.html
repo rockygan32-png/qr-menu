@@ -209,6 +209,31 @@ body {
   border-color: gold;  /* highlight gold */
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3); /* subtle gold shadow */
 }
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+#searchInput {
+  padding-right: 40px; /* space for the × */
+}
+
+#clearSearch {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  display: none;
+  user-select: none;
+}
+
+#clearSearch:hover {
+  color: #ccc;
+}
 </style>
 </head>
 
@@ -225,12 +250,15 @@ body {
 
 <!-- ===== SEARCH BAR ===== -->
 <div class="search-bar">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="🔍 Search by food name or code..."
-    onkeyup="searchFood()"
-  >
+  <div class="search-wrapper">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="🔍 Search by food name or code..."
+      onkeyup="searchFood()"
+    >
+    <span id="clearSearch" onclick="clearSearch()">×</span>
+  </div>
 </div>
 <!-- ===== CATEGORY BAR ===== -->
 <div class="category-bar">
@@ -497,6 +525,21 @@ function searchFood() {
     }
   });
 }
+</script>
+<script>
+function clearSearch() {
+  const input = document.getElementById("searchInput");
+  input.value = "";
+  searchFood();
+  input.focus();
+}
+
+const searchInput = document.getElementById("searchInput");
+const clearBtn = document.getElementById("clearSearch");
+
+searchInput.addEventListener("input", () => {
+  clearBtn.style.display = searchInput.value ? "block" : "none";
+});
 </script>
 </body>
 </html>
