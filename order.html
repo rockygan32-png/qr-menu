@@ -34,11 +34,11 @@ body {
 .brand {
   display: flex;
   align-items: center;
+  gap: 0;
 }
 
 .brand img {
-  height: 40px;
-  margin-right: 10px;
+  display: none;
 }
 
 .order-info {
@@ -54,7 +54,7 @@ body {
   padding: 10px;
 
   position: sticky;
-  top: 115px; /* height of top bar */
+  top: 88px; /* height of top bar */
   z-index: 150;
 }
 
@@ -85,6 +85,7 @@ body {
 .section h2 {
   border-bottom: 2px solid #ddd;
   padding-bottom: 5px;
+  margin-top: 0;
 }
 
 /* ===== GRID ===== */
@@ -177,7 +178,7 @@ body {
 /* ===== SEARCH BAR ===== */
 .search-bar {
   position: sticky;
-  top: 60px; /* below top bar */
+  top: 38px; /* below top bar */
   z-index: 180;
   background: #111;
   padding: 10px 15px;
@@ -242,7 +243,6 @@ body {
 <!-- ===== TOP BAR ===== -->
 <div class="top-bar">
   <div class="brand">
-    <img src="https://i.imgur.com/8Km9tLL.png" alt="Logo">
     <div>The Windmill Station</div>
   </div>
   <div class="order-info" id="tableInfo"></div>
