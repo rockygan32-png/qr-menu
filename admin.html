@@ -53,41 +53,26 @@ button {
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-firebase.initializeApp({
+const firebaseConfig = {
   apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvW",
   authDomain: "qr-menu-fe159.firebaseapp.com",
   projectId: "qr-menu-fe159"
-});
+};
 
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const list = document.getElementById("list");
 
-db.collection("foods").orderBy("code").onSnapshot(snapshot => {
-  list.innerHTML = "";
+document.body.insertAdjacentHTML(
+  "beforeend",
+  "<p style='color:green;text-align:center'>Firebase connected</p>"
+);
 
-  snapshot.forEach(doc => {
-    const food = doc.data();
-
-    const div = document.createElement("div");
-    div.className = "food";
-
-    div.innerHTML = `
-      <span>${food.name} (${food.code})</span>
-      <button class="${food.unavailable ? 'off' : 'on'}">
-        ${food.unavailable ? 'Make Available' : 'Make Unavailable'}
-      </button>
-    `;
-
-    div.querySelector("button").onclick = () => {
-      db.collection("foods").doc(doc.id).update({
-        unavailable: !food.unavailable
-      });
-    };
-
-    list.appendChild(div);
-  });
+db.collection("foods").get().then(snapshot => {
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    "<p style='color:blue;text-align:center'>Foods found: " + snapshot.size + "</p>"
+  );
 });
 </script>
-
 </body>
 </html>
