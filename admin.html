@@ -2,8 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
-
+<title>Admin Panel - Food Availability</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -16,43 +15,39 @@ h1 {
   margin-bottom: 20px;
 }
 
-.food {
+.food-item {
   background: white;
   padding: 12px 15px;
-  border-radius: 8px;
   margin-bottom: 10px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.food span {
-  font-weight: bold;
-}
-
 button {
-  padding: 6px 12px;
+  padding: 6px 10px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   color: white;
 }
 
-.on { background: red; }
-.off { background: green; }
+.available { background: green; }
+.unavailable { background: red; }
 </style>
 </head>
-
 <body>
 
-<h1>Admin – Food Availability</h1>
-<div id="list"></div>
+<h1>Admin Panel - Food Availability</h1>
+<div id="foodList"></div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
+// 🔑 Replace these with your Firebase project info
 const firebaseConfig = {
   apiKey: "AIzaSyD9x_Fvec4nkEHWVJ6D02xDvW",
   authDomain: "qr-menu-fe159.firebaseapp.com",
@@ -62,16 +57,37 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-document.body.insertAdjacentHTML(
-  "beforeend",
-  "<p style='color:green;text-align:center'>Firebase connected</p>"
-);
+const foodList = document.getElementById("foodList");
 
-db.collection("foods").get().then(snapshot => {
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    "<p style='color:blue;text-align:center'>Foods found: " + snapshot.size + "</p>"
-  );
+db.collection("foods").onSnapshot(snapshot => {
+  foodList.innerHTML = ""; // Clear list first
+
+  snapshot.forEach(doc => {
+    const food = doc.data();
+
+    // Container
+    const div = document.createElement("div");
+    div.className = "food-item";
+
+    // Name
+    const name = document.createElement("span");
+    name.textContent = food.name + " (" + food.code + ")";
+
+    // Button
+    const btn = document.createElement("button");
+    btn.textContent = food.unavailable ? "Make Available" : "Make Unavailable";
+    btn.className = food.unavailable ? "available" : "unavailable";
+
+    btn.onclick = () => {
+      db.collection("foods").doc(doc.id).update({
+        unavailable: !food.unavailable
+      });
+    };
+
+    div.appendChild(name);
+    div.appendChild(btn);
+    foodList.appendChild(div);
+  });
 });
 </script>
 </body>
