@@ -88,11 +88,35 @@ button {
   font-size:16px;
   padding:14px;
 }
+
+/* ===== BACK BUTTON ===== */
+.back-bar {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  background: #111;
+  padding: 10px 15px;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: gold;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  opacity: 0.8;
+}
 </style>
 </head>
 
 <body>
-
+<div class="back-bar">
+  <button class="back-btn" onclick="goBack()">← Back</button>
+</div>
 <img id="img">
 
 <div class="container">
@@ -374,6 +398,16 @@ function addCart() {
   localStorage.setItem("cart", JSON.stringify(cart));
   alert("Added to cart 🛒");
   history.back();
+}
+
+function goBack() {
+  // Go back if possible
+  if (document.referrer) {
+    window.history.back();
+  } else {
+    // Fallback
+    window.location.href = "order.html";
+  }
 }
 </script>
 
